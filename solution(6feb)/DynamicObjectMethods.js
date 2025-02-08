@@ -16,7 +16,6 @@ let sentenceBuilder = {
     }
   };
   
-  // Example Usage
   console.log(sentenceBuilder.buildSentence()); // "I am coding"
   
   sentenceBuilder.updateProperty("verb", "am learning");
