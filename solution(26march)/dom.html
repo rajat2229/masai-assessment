@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L0 - Basic DOM Manipulation</title>
+    <style>
+        .bold-blue {
+            font-weight: bold;
+            color: blue;
+        }
+        .italic-red {
+            font-style: italic;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <ul id="item-list">
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+    </ul>
+    <button id="add-item">Add Item</button>
+
+    <script>
+        const ul = document.querySelector("#item-list");
+        const button = document.querySelector("#add-item");
+
+        button.addEventListener("click", () => {
+            const newItem = document.createElement("li");
+            const itemCount = ul.children.length + 1;
+            newItem.textContent = `New Item ${itemCount}`;
+
+            if (itemCount % 2 === 1) {
+                newItem.classList.add("bold-blue");
+            } else {
+                newItem.classList.add("italic-red");
+            }
+
+            ul.appendChild(newItem);
+        });
+    </script>
+</body>
+</html>

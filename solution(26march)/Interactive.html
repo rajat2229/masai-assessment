@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L1 - Interactive DOM Manipulation</title>
+    <style>
+        #content-box {
+            width: 300px;
+            height: 150px;
+            border: 2px solid black;
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Interactive DOM Manipulation</h2>
+
+    <label for="color-input">Enter Background Color:</label>
+    <input type="text" id="color-input" placeholder="e.g., red, blue, #ff5733">
+    <button id="change-bg-btn">Change Background</button>
+
+    <br><br>
+
+    <label for="text-input">Enter Text:</label>
+    <input type="text" id="text-input" placeholder="Type something...">
+    <button id="update-text-btn">Update Text</button>
+
+    <div id="content-box">This is a sample text.</div>
+
+    <script>
+        const colorInput = document.getElementById("color-input");
+        const textInput = document.getElementById("text-input");
+        const changeBgBtn = document.getElementById("change-bg-btn");
+        const updateTextBtn = document.getElementById("update-text-btn");
+        const contentBox = document.getElementById("content-box");
+
+        changeBgBtn.addEventListener("click", () => {
+            const color = colorInput.value.trim();
+            const testElement = document.createElement("div");
+            testElement.style.color = color;
+
+            if (testElement.style.color === "") {
+                alert("Invalid color name!");
+            } else {
+                contentBox.style.backgroundColor = color;
+            }
+        });
+
+        updateTextBtn.addEventListener("click", () => {
+            const text = textInput.value.trim();
+
+            if (text === "") {
+                alert("Please enter some text!");
+            } else {
+                contentBox.textContent = text;
+            }
+        });
+    </script>
+</body>
+</html>
