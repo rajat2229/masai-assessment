@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Theme Selector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Choose a Theme</h2>
+    <select id="themeSelector">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="blue">Blue</option>
+    </select>
+
+    <script>
+        const themeSelector = document.getElementById("themeSelector");
+
+        // Function to apply theme
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.body.style.backgroundColor = "#333";
+                document.body.style.color = "#fff";
+            } else if (theme === "blue") {
+                document.body.style.backgroundColor = "#007BFF";
+                document.body.style.color = "#fff";
+            } else {
+                document.body.style.backgroundColor = "#fff";
+                document.body.style.color = "#000";
+            }
+        }
+
+        // Load saved theme from sessionStorage
+        window.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = sessionStorage.getItem("selectedTheme") || "light"; // Default to Light
+            themeSelector.value = savedTheme;
+            applyTheme(savedTheme);
+        });
+
+        // Event listener for theme change
+        themeSelector.addEventListener("change", () => {
+            const selectedTheme = themeSelector.value;
+            sessionStorage.setItem("selectedTheme", selectedTheme);
+            applyTheme(selectedTheme);
+        });
+    </script>
+
+</body>
+</html>
