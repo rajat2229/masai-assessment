@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #weather {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Weather App</h2>
+    <form id="weatherForm">
+        <input type="text" id="city" placeholder="Enter city name" required>
+        <button type="submit">Get Weather</button>
+    </form>
+    <p id="weather"></p>
+    <p id="error-message" class="error"></p>
+
+    <script>
+        const weatherForm = document.getElementById('weatherForm');
+        const cityInput = document.getElementById('city');
+        const weatherDisplay = document.getElementById('weather');
+        const errorMessage = document.getElementById('error-message');
+
+        weatherForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const city = cityInput.value.trim();
+            if (city === "") {
+                showError("Please enter a city name.");
+                return;
+            }
+            fetchWeather(city);
+        });
+
+        async function fetchWeather(city) {
+            const apiKey = "YOUR_API_KEY"; // Replace with your OpenWeather API key
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("City not found or API error");
+
+                const data = await response.json();
+                displayWeather(data);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function displayWeather(data) {
+            errorMessage.textContent = ""; // Clear error message
+            weatherDisplay.innerHTML = `
+                <strong>City:</strong> ${data.name} <br>
+                <strong>Temperature:</strong> ${data.main.temp}°C <br>
+                <strong>Weather:</strong> ${data.weather[0].description}
+            `;
+        }
+
+        function showError(message) {
+            weatherDisplay.textContent = "";
+            errorMessage.textContent = message;
+        }
+    </script>
+
+</body>
+</html>
