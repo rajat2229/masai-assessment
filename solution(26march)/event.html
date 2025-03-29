@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Propagation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .outer {
+            background-color: lightcoral;
+            padding: 30px;
+        }
+        .middle {
+            background-color: lightblue;
+            padding: 30px;
+        }
+        .inner {
+            background-color: lightgreen;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Event Propagation Exploration</h2>
+
+    <div class="outer" id="outer">
+        Outer Div
+        <div class="middle" id="middle">
+            Middle Div
+            <div class="inner" id="inner">
+                Inner Div
+                <button id="inner-button">Click Me</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const outerDiv = document.getElementById("outer");
+        const middleDiv = document.getElementById("middle");
+        const innerDiv = document.getElementById("inner");
+        const innerButton = document.getElementById("inner-button");
+
+        outerDiv.addEventListener("click", () => alert("Outer Div Clicked (Bubbling)"), false);
+        outerDiv.addEventListener("click", () => alert("Outer Div Clicked (Capturing)"), true);
+
+        middleDiv.addEventListener("click", () => alert("Middle Div Clicked (Bubbling)"), false);
+        middleDiv.addEventListener("click", () => alert("Middle Div Clicked (Capturing)"), true);
+
+        innerDiv.addEventListener("click", () => alert("Inner Div Clicked (Bubbling)"), false);
+        innerDiv.addEventListener("click", () => alert("Inner Div Clicked (Capturing)"), true);
+
+        innerButton.addEventListener("click", (event) => {
+            alert("Button Clicked");
+            event.stopPropagation(); // Stops event from propagating to parent elements
+        });
+    </script>
+
+</body>
+</html>
