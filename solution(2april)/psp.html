@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Search Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .loading {
+            font-size: 20px;
+            color: blue;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Product Search</h1>
+
+<label for="category">Select Category:</label>
+<select id="category">
+    <option value="electronics">Electronics</option>
+    <option value="clothing">Clothing</option>
+    <option value="books">Books</option>
+</select>
+
+<label for="min_price">Min Price:</label>
+<input type="number" id="min_price" placeholder="Min Price" />
+
+<label for="max_price">Max Price:</label>
+<input type="number" id="max_price" placeholder="Max Price" />
+
+<button id="searchBtn">Search</button>
+
+<div id="loading" class="loading" style="display: none;">Loading...</div>
+<div id="error" class="error" style="display: none;"></div>
+<div id="productList" class="product-grid"></div>
+
+<script>
+    document.getElementById('searchBtn').addEventListener('click', fetchProducts);
+
+    async function fetchProducts() {
+        const category = document.getElementById('category').value;
+        const minPrice = document.getElementById('min_price').value || 0;
+        const maxPrice = document.getElementById('max_price').value || 5000;
+
+        const apiUrl = `https://mockapi.io/products?category=${category}&min_price=${minPrice}&max_price=${maxPrice}&sort=asc`;
+
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('productList').innerHTML = '';
+
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const data = await response.json();
+            displayProducts(data);
+        } catch (error) {
+            document.getElementById('error').textContent = `Error: ${error.message}`;
+            document.getElementById('error').style.display = 'block';
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    function displayProducts(products) {
+        const productList = document.getElementById('productList');
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" style="width: 100%; height: auto;" />
+                <h2>${product.name}</h2>
+                <p>Price: $${product.price}</p>
+            `;
+            productList.appendChild(card);
+        });
+    }
+</script>
+
+</body>
+</html>

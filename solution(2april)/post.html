@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1>User Registration</h1>
+
+<form id="registrationForm">
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required />
+    </div>
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" required />
+    </div>
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" required />
+    </div>
+    <button type="submit">Register</button>
+</form>
+
+<div id="message" class="success" style="display: none;"></div>
+<div id="error" class="error" style="display: none;"></div>
+
+<script>
+    document.getElementById('registrationForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (!name || !email || !password) {
+            showError("All fields are required.");
+            return;
+        }
+
+        const apiUrl = 'https://mockapi.io/users';
+        const userData = {
+            name: name,
+            email: email,
+            password: password
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (!response.ok) throw new Error('Registration failed.');
+
+            const data = await response.json();
+            showMessage("Registration successful! Welcome, " + data.name);
+            clearForm();
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    function showMessage(message) {
+        document.getElementById('message').textContent = message;
+        document.getElementById('message').style.display = 'block';
+        document.getElementById('error').style.display = 'none';
+    }
+
+    function showError(message) {
+        document.getElementById('error').textContent = message;
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('message').style.display = 'none';
+    }
+
+    function clearForm() {
+        document.getElementById('registrationForm').reset();
+    }
+</script>
+
+</body>
+</html>

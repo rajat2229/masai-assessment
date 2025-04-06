@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .user-list {
+            margin-top: 20px;
+        }
+        .user-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1>User Dashboard</h1>
+
+<div id="userList" class="user-list"></div>
+
+<h2>Add New User</h2>
+<form id="userForm">
+    <input type="text" id="name" placeholder="Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <button type="submit">Add User</button>
+</form>
+
+<div id="error" class="error" style="display: none;"></div>
+
+<script>
+    const apiUrl = 'https://mockapi.io/users';
+
+    document.getElementById('userForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+
+        const newUser = { name, email };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newUser),
+            });
+
+            if (!response.ok) throw new Error('Failed to add user.');
+
+            await fetchUsers();
+            clearForm();
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    async function fetchUsers() {
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error('Failed to fetch users.');
+
+            const users = await response.json();
+            displayUsers(users);
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+
+    function displayUsers(users) {
+        const userList = document.getElementById('userList');
+        userList.innerHTML = '';
+
+        users.forEach(user => {
+            const card = document.createElement('div');
+            card.className = 'user-card';
+            card.innerHTML = `<strong>${user.name}</strong> (${user.email})`;
+            userList.appendChild(card);
+        });
+    }
+
+    function showError(message) {
+        const errorDiv = document.getElementById('error');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+
+    function clearForm() {
+        document.getElementById('userForm').reset();
+        document.getElementById('error').style.display = 'none';
+    }
+
+    // Initial fetch of users
+    fetchUsers();
+</script>
+
+</body>
+</html>

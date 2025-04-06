@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .task-list {
+            margin-top: 20px;
+        }
+        .task-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .error {
+            color: red;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Task Manager</h1>
+
+<div id="taskList" class="task-list"></div>
+
+<div id="error" class="error hidden"></div>
+
+<!-- Edit Task Modal -->
+<div id="editModal" class="hidden">
+    <h2>Edit Task</h2>
+    <input type="text" id="editTitle" placeholder="Task Title" required />
+    <select id="editStatus">
+        <option value="Pending">Pending</option>
+        <option value="Completed">Completed</option>
+    </select>
+    <button id="saveEditBtn">Save</button>
+    <button id="cancelEditBtn">Cancel</button>
+</div>
+
+<script>
+    const apiUrl = 'https://mockapi.io/tasks';
+    let currentEditId = null;
+
+    document.addEventListener('DOMContentLoaded', fetchTasks);
+    
+    async function fetchTasks() {
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error('Failed to fetch tasks.');
+
+            const tasks = await response.json();
+            displayTasks(tasks);
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+
+    function displayTasks(tasks) {
+        const taskList = document.getElementById('taskList');
+        taskList.innerHTML = '';
+
+        tasks.forEach(task => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.innerHTML = `
+                <strong>${task.title}</strong> - ${task.status}
+                <div>
+                    <button onclick="editTask('${task.id}', '${task.title}', '${task.status}')">Edit</button>
+                    <button onclick="confirmDeleteTask('${task.id}')">Delete</button>
+                </div>
+            `;
+            taskList.appendChild(card);
+        });
+    }
+
+    function showError(message) {
+        const errorDiv = document.getElementById('error');
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+    }
+
+    async function editTask(id, title, status) {
+        currentEditId = id;
+        document.getElementById('editTitle').value = title;
+        document.getElementById('editStatus').value = status;
+        document.getElementById('editModal').classList.remove('hidden');
+
+        document.getElementById('saveEditBtn').onclick = () => updateTask(id);
+        document.getElementById('cancelEditBtn').onclick = () => {
+            document.getElementById('editModal').classList.add('hidden');
+        };
+    }
+
+    async function updateTask(id) {
+        const updatedTask = {
+            title: document.getElementById('editTitle').value,
+            status: document.getElementById('editStatus').value
+        };
+
+        try {
+            const response = await fetch(`${apiUrl}/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedTask),
+            });
+
+            if (!response.ok) throw new Error('Failed to update task.');
+
+            fetchTasks();
+            document.getElementById('editModal').classList.add('hidden');
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+
+    function confirmDeleteTask(id) {
+        if (confirm('Are you sure you want to delete this task?')) {
+            deleteTask(id);
+        }
+    }
+
+    async function deleteTask(id) {
+        try {
+            const response = await fetch(`${apiUrl}/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) throw new Error('Failed to delete task.');
+
+            fetchTasks();
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+</script>
+
+</body>
+</html>
